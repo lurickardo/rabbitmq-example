@@ -1,19 +1,19 @@
 {
-	"name": "publisher",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "bun run --env-file=.env index.ts",
-		"lint": "npx @biomejs/biome format ./ --write"
-	},
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"amqplib": "^0.10.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.6.4",
-		"@types/amqplib": "^0.10.5"
-	}
+  "name": "publisher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "bun run index.ts",
+    "lint": "npx @biomejs/biome format ./ --write"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.4",
+    "@types/amqplib": "^0.10.5"
+  }
 }
