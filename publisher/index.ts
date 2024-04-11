@@ -94,5 +94,5 @@ const email = {
   attachments: [],
 };
 
-publishEmail(emails, 1000);
-publishEmail(email, 1000);
+publishEmail(emails, 10000);
+publishEmail(email, 10000);
