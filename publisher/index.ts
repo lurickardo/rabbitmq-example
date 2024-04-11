@@ -1,47 +1,98 @@
 import amqp from "amqplib";
 
-async function publishMessage(
-  exchangeName: string,
-  queueName: string,
-  message: any,
-  interval: number = 500,
-) {
+type Email = {
+  title: string;
+  recipients: string[];
+  body: string;
+  attachments: string[];
+};
+
+const bootstrap = async () => {
+  const connection = await amqp.connect(String(process.env.AMQP_URL));
+  const channel = await connection.createChannel();
+
+  await channel.assertExchange(
+    String(process.env.EXCHANGE_NAME),
+    String(process.env.EXCHANGE_TYPE),
+    {
+      durable: true,
+    },
+  );
+
+  await channel.assertQueue(String(process.env.EMAIL_QUEUE), { durable: true });
+  await channel.assertQueue(String(process.env.EMAILS_QUEUE), {
+    durable: true,
+  });
+  await channel.bindQueue(
+    String(process.env.EMAIL_QUEUE),
+    String(process.env.EXCHANGE_NAME),
+    "",
+  );
+  await channel.bindQueue(
+    String(process.env.EMAILS_QUEUE),
+    String(process.env.EXCHANGE_NAME),
+    "",
+  );
+
+  return channel;
+};
+
+async function publishEmail(email: Email | Email[], interval: number = 500) {
   try {
-    const connection = await amqp.connect(String(process.env.AMQP_URL));
-    const channel = await connection.createChannel();
+    const channel = await bootstrap();
 
-    await channel.assertExchange(exchangeName, "direct", { durable: true });
+    if (!Array.isArray(email))
+      return setInterval(() => {
+        channel.sendToQueue(
+          String(process.env.EMAIL_QUEUE),
+          Buffer.from(JSON.stringify(email)),
+          {
+            persistent: true,
+          },
+        );
+        console.log(
+          `[x] Email published in the queue: ${process.env.EMAIL_QUEUE}.`,
+        );
+      }, interval);
 
-    setInterval(() => {
-      channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), {
-        persistent: true,
-      });
-      console.log(`[x] Mensagem publicada na exchange ${exchangeName}.`);
+    return setInterval(() => {
+      channel.sendToQueue(
+        String(process.env.EMAILS_QUEUE),
+        Buffer.from(JSON.stringify(email)),
+        {
+          persistent: true,
+        },
+      );
+      console.log(
+        `[x] Emails published in the queue: ${process.env.EMAIL_QUEUE}.`,
+      );
     }, interval);
   } catch (error) {
-    console.error("[!] Ocorreu um erro ao publicar a mensagem:", error);
+    console.error("[!] Error publishing message:", error);
   }
 }
 
-const exchangeName = String(process.env.EMAIL_EXCHANGE_NAME);
-const queueName = String(process.env.EMAIL_QUEUE_NAME);
-const messages = {
-  notifications: [
-    {
-      title: "Titulo do texto",
-      recipients: ["luizr726@gmail.com"],
-      body: "Corpo do texto",
-      attachments: [],
-    },
-  ],
-};
+const emails = [
+  {
+    title: "Titulo do email 1",
+    recipients: ["luizr726@gmail.com"],
+    body: "Corpo do email 2",
+    attachments: [],
+  },
+  {
+    title: "Titulo do email 2",
+    recipients: ["luizr726@gmail.com"],
+    body: "Corpo do email 2",
+    attachments: [],
+  },
+];
 
-publishMessage(exchangeName, queueName, messages, 500);
-
-const message = {
+const email = {
   title: "Titulo do texto",
   recipients: ["luizr726@gmail.com"],
   body: "Corpo do texto",
   attachments: [],
 };
-publishMessage(exchangeName, "notification", message, 250);
+
+publishEmail(emails, 1000);
+publishEmail(email, 1000);
