@@ -1,4 +1,31 @@
-import amqp from "amqplib";
+import * as amqp from "amqplib";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import * as mime from "mime-types";
+
+const contentType = (filename: string) => {
+  const extension = filename.split(".").pop();
+  return mime.lookup(extension);
+};
+
+const convertFile = (
+  {
+    file,
+    baseEncoding = "utf-8",
+  }: { file: string; baseEncoding?: BufferEncoding },
+  targetEncoding: BufferEncoding,
+) => {
+  try {
+    const readFile = fs.readFileSync(path.resolve(__dirname, file), {
+      encoding: baseEncoding,
+    });
+
+    return Buffer.from(readFile).toString(targetEncoding);
+  } catch (error) {
+    console.error("Arquivo não encontrado");
+    return null;
+  }
+};
 
 type Email = {
   from?: string;
@@ -6,7 +33,7 @@ type Email = {
   subject: string;
   text: string;
   html?: string;
-  attachments: string[];
+  attachments: { filename: string; content: string; contentType: string }[];
 };
 
 const bootstrap = async () => {
@@ -36,6 +63,7 @@ const bootstrap = async () => {
     "",
   );
 
+  console.log(`[✔ ] : Server amqp connected.`);
   return channel;
 };
 
@@ -74,6 +102,14 @@ async function publishEmail(email: Email | Email[], interval: number = 500) {
   }
 }
 
+const attachments = fs.readdirSync("attachments").map((attachment) => {
+  return {
+    filename: attachment,
+    content: convertFile({ file: `attachments/${attachment}` }, "base64"),
+    contentType: contentType(attachment) || "text/plain",
+  };
+});
+
 const emails = [
   {
     to: ["luizr726@gmail.com"],
@@ -96,8 +132,8 @@ const email = {
   subject: "Titulo do texto",
   text: "Corpo do texto",
   html: "<h1>Corpo do texto</h1>",
-  attachments: [],
+  attachments: attachments,
 };
 
-publishEmail(emails, 10000);
-publishEmail(email, 10000);
+publishEmail(emails, 2500);
+publishEmail(email, 2500);

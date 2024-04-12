@@ -1,13 +1,6 @@
-import nodemailer, { SendMailOptions } from "nodemailer";
+import * as nodemailer from "nodemailer";
 import { env } from "../config";
-
-type SendEmail = {
-  from: string;
-  to: string[];
-  subject: string;
-  text: string;
-  html?: string;
-};
+import { MailOptions } from "nodemailer/lib/sendmail-transport";
 
 const transporter = nodemailer.createTransport({
   host: env.smtpEmail.host,
@@ -19,7 +12,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// async..await is not allowed in global scope, must use a wrapper
 export const sendMail = async ({
   from = env.smtpEmail.defaultEmailFrom,
   to,
@@ -27,15 +19,19 @@ export const sendMail = async ({
   text,
   html,
   attachments,
-}: SendMailOptions): Promise<string> => {
-  const info = await transporter.sendMail({
-    from,
-    to,
-    subject,
-    text,
-    html,
-    attachments,
-  });
+}: MailOptions): Promise<void> => {
+  try {
+    const response = await transporter.sendMail({
+      from,
+      to,
+      subject,
+      text,
+      html,
+      attachments,
+    });
 
-  return info.messageId;
+    console.info(response.messageId);
+  } catch (error) {
+    console.error("[!] Error nodemailer - sendMail:", error);
+  }
 };
