@@ -4,9 +4,11 @@ import { Base64 } from "js-base64";
 const sendEmailsSchema = z
   .array(
     z.object({
-      title: z.string().min(1).max(50),
-      recipients: z.array(z.string().email().max(256)).nonempty(),
-      body: z.string().min(1).max(1000),
+      from: z.string().email().max(256).optional(),
+      to: z.array(z.string().email().max(256)).nonempty(),
+      subject: z.string().min(1).max(50),
+      text: z.string().min(1).max(1000).optional(),
+      html: z.string().min(1).optional(),
       attachments: z.array(z.string().refine(Base64.isValid)).optional(),
     }),
   )

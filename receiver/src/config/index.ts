@@ -1,6 +1,12 @@
 type Env = {
   app: { amqpUrl: string; environment: string };
-  database: { name: string; url: string };
+  smtpEmail: {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: { user: string; pass: string };
+    defaultEmailFrom: string;
+  };
   channel: {
     exchange: { name: string; type: string };
     queues: { emailQueue: string; emailsQueue: string };
@@ -12,9 +18,15 @@ export const env = Object.freeze({
     amqpUrl: process.env.AMQP_URL,
     environment: process.env.APP_ENVIRONMENT,
   },
-  database: {
-    name: process.env.DB_NAME,
-    url: process.env.DB_URL,
+  smtpEmail: {
+    host: process.env.SMTP_EMAIL_HOST,
+    port: Number(process.env.SMTP_EMAIL_PORT),
+    secure: Boolean(process.env.SMTP_EMAIL_SECURE),
+    auth: {
+      user: process.env.SMTP_EMAIL_AUTH_USER,
+      pass: process.env.SMTP_EMAIL_AUTH_PASS,
+    },
+    defaultEmailFrom: process.env.DEFAULT_EMAIL_FROM,
   },
   channel: {
     exchange: {

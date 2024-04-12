@@ -1,9 +1,11 @@
 import amqp from "amqplib";
 
 type Email = {
-  title: string;
-  recipients: string[];
-  body: string;
+  from?: string;
+  to: string[];
+  subject: string;
+  text: string;
+  html?: string;
   attachments: string[];
 };
 
@@ -74,23 +76,26 @@ async function publishEmail(email: Email | Email[], interval: number = 500) {
 
 const emails = [
   {
-    title: "Titulo do email 1",
-    recipients: ["luizr726@gmail.com"],
-    body: "Corpo do email 2",
+    to: ["luizr726@gmail.com"],
+    subject: "Titulo do texto 1",
+    text: "Corpo do texto",
+    html: "<h1>Corpo do texto</h1>",
     attachments: [],
   },
   {
-    title: "Titulo do email 2",
-    recipients: ["luizr726@gmail.com"],
-    body: "Corpo do email 2",
+    to: ["luizr726@gmail.com"],
+    subject: "Titulo do texto 2",
+    text: "Corpo do texto",
+    html: "<h1>Corpo do texto</h1>",
     attachments: [],
   },
 ];
 
 const email = {
-  title: "Titulo do texto",
-  recipients: ["luizr726@gmail.com"],
-  body: "Corpo do texto",
+  to: ["luizr726@gmail.com"],
+  subject: "Titulo do texto",
+  text: "Corpo do texto",
+  html: "<h1>Corpo do texto</h1>",
   attachments: [],
 };
 
