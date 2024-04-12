@@ -112,14 +112,14 @@ const attachments = fs.readdirSync("attachments").map((attachment) => {
 
 const emails = [
   {
-    to: ["luizr726@gmail.com"],
+    to: ["seuemail@gmail.com"],
     subject: "Titulo do texto 1",
     text: "Corpo do texto",
     html: "<h1>Corpo do texto</h1>",
     attachments: [],
   },
   {
-    to: ["luizr726@gmail.com"],
+    to: ["seuemail@gmail.com"],
     subject: "Titulo do texto 2",
     text: "Corpo do texto",
     html: "<h1>Corpo do texto</h1>",
@@ -128,7 +128,7 @@ const emails = [
 ];
 
 const email = {
-  to: ["luizr726@gmail.com"],
+  to: ["seuemail@gmail.com"],
   subject: "Titulo do texto",
   text: "Corpo do texto",
   html: "<h1>Corpo do texto</h1>",
