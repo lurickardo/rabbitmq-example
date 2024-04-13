@@ -13,7 +13,7 @@
 </p>
 
 # Diagram
-<img src="https://github.com/lurickardo/rabbitmq-example/assets/34722198/285fa3d4-0550-484f-8f8d-a7ad1636adb2" alt="Diagram" width="500">
+<img src="https://github.com/lurickardo/rabbitmq-example/assets/34722198/d59f2330-d520-4a41-8822-7f844e3a6266" alt="Diagram" width="500">
 
 # Libraries
 
