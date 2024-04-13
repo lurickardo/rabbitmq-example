@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Base64 } from "js-base64";
 
-const sendEmailSchema = z.object({
+const emailSchema = z.object({
   from: z.string().email().max(256).optional(),
   to: z.array(z.string().email().max(256)).nonempty(),
   subject: z.string().min(1).max(50),
@@ -18,6 +18,8 @@ const sendEmailSchema = z.object({
     )
     .optional(),
 });
+
+const sendEmailSchema = z.union([emailSchema, z.array(emailSchema).nonempty()]);
 
 export type SendEmailDto = z.infer<typeof sendEmailSchema>;
 

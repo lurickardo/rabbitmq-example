@@ -49,16 +49,8 @@ const bootstrap = async () => {
   );
 
   await channel.assertQueue(String(process.env.EMAIL_QUEUE), { durable: true });
-  await channel.assertQueue(String(process.env.EMAILS_QUEUE), {
-    durable: true,
-  });
   await channel.bindQueue(
     String(process.env.EMAIL_QUEUE),
-    String(process.env.EXCHANGE_NAME),
-    "",
-  );
-  await channel.bindQueue(
-    String(process.env.EMAILS_QUEUE),
     String(process.env.EXCHANGE_NAME),
     "",
   );
@@ -71,7 +63,6 @@ async function publishEmail(email: Email | Email[], interval: number = 500) {
   try {
     const channel = await bootstrap();
 
-    if (!Array.isArray(email))
       return setInterval(() => {
         channel.sendToQueue(
           String(process.env.EMAIL_QUEUE),
@@ -84,19 +75,6 @@ async function publishEmail(email: Email | Email[], interval: number = 500) {
           `[x] Email published in the queue: ${process.env.EMAIL_QUEUE}.`,
         );
       }, interval);
-
-    return setInterval(() => {
-      channel.sendToQueue(
-        String(process.env.EMAILS_QUEUE),
-        Buffer.from(JSON.stringify(email)),
-        {
-          persistent: true,
-        },
-      );
-      console.log(
-        `[x] Emails published in the queue: ${process.env.EMAIL_QUEUE}.`,
-      );
-    }, interval);
   } catch (error) {
     console.error("[!] Error publishing message:", error);
   }

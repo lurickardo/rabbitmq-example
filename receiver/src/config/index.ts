@@ -9,7 +9,7 @@ type Env = {
   };
   channel: {
     exchange: { name: string; type: string };
-    queues: { emailQueue: string; emailsQueue: string };
+    queues: { emailQueue: string; };
   };
 };
 
@@ -35,7 +35,6 @@ export const env = Object.freeze({
     },
     queues: {
       emailQueue: process.env.EMAIL_QUEUE,
-      emailsQueue: process.env.EMAILS_QUEUE,
     },
   },
 } as Env);
